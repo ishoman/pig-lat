@@ -56,7 +56,7 @@ var isEndPunctuation = function(character){
 }
 
 var isAVowel = function(letter){
-  if((letter.length === 1) && ("aeiouAEIOU".includes(letter))){
+  if(letter.match(/^[aeiou]{1}$/gi)) {
     return true;
   }
   else {
@@ -65,7 +65,7 @@ var isAVowel = function(letter){
 }
 
 var isAConsonant = function(letter){
-  if((letter.length === 1) && ("bBcCdDfFgGhHjJkKlLmMnNpPqQrRsStTvVwWxXzZ".includes(letter))){
+  if(letter.match(/^[b-df-hj-np-tv-z]{1}$/gi)){
     return true;
   }
   else {
@@ -74,7 +74,7 @@ var isAConsonant = function(letter){
 }
 
 var isAY = function(letter){
-  if(letter === "y" || letter === "Y"){
+  if(letter.match(/^[y]{1}$/gi)){
     return true;
   }
   else {
@@ -86,12 +86,12 @@ var multipleStarts = function(word) { //checks multiple letters before first vow
   var firstVowelIndex = "";
   var index = 0;
   while (index < word.length && firstVowelIndex === "") {
-    if(isAVowel(word[index])){
+    if(isAVowel(word[index]) || isAY(word[index])) {
       firstVowelIndex = index;
     }
     index ++;
   }
-  if((firstVowelIndex === 1) && ((word[firstVowelIndex-1] !== "q") ||(word[firstVowelIndex-1] !== "Q"))) {
+  if((firstVowelIndex <= 1) && ((word[firstVowelIndex-1] !== "q") ||(word[firstVowelIndex-1] !== "Q"))) {
     return "";
   }
   else if(word[firstVowelIndex-1] === "q" || word[firstVowelIndex-1] === "Q") {
