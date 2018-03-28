@@ -2,11 +2,11 @@
 var sentenceTranslator = function (sentence) {
   sentenceTrimmed = sentence.replace(/  +/g, " ");
   var sentenceArray = sentenceTrimmed.split(" ");
-  return sentenceArray;
+  var resultArray = sentenceArray.map(function(word){
+    return punctuationFixer(wordTranslator(word));
+  });
+  return resultArray.join(" ");
 }
-
-
-
 
 
 // Single Word Function
@@ -31,10 +31,32 @@ var wordTranslator = function(input){
   }
 };
 
+//Punctuation Helper Function
+var punctuationFixer = function(input) {
+  var endPunctuation = "";
+  for(var index = 0; index <= input.length; index ++){
+    if (isEndPunctuation(input[index])){
+      endPunctuation = endPunctuation + input[index];
+      input = input.replace(input[index]," ");
+    }
+  }
+  input = input.replace(/  */g, "");
+  return input + endPunctuation;
+}
+
 
 // Helper Functions
+var isEndPunctuation = function(character){
+  if ("?!.,".includes(character)){
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
 var isAVowel = function(letter){
-  if((letter.length === 1) && ("aeiou".includes(letter))){
+  if((letter.length === 1) && ("aeiouAEIOU".includes(letter))){
     return true;
   }
   else {
@@ -43,7 +65,7 @@ var isAVowel = function(letter){
 }
 
 var isAConsonant = function(letter){
-  if((letter.length === 1) && ("bcdfghjklmnpqrstvwxz".includes(letter))){
+  if((letter.length === 1) && ("bBcCdDfFgGhHjJkKlLmMnNpPqQrRsStTvVwWxXzZ".includes(letter))){
     return true;
   }
   else {
@@ -52,7 +74,7 @@ var isAConsonant = function(letter){
 }
 
 var isAY = function(letter){
-  if(letter === "y"){
+  if(letter === "y" || letter === "Y"){
     return true;
   }
   else {
@@ -61,22 +83,24 @@ var isAY = function(letter){
 }
 
 var multipleStarts = function(word) { //checks multiple letters before first vowel
-  var firstVowelIndex;
-  for (var index = 0; index < word.length; index ++) {
+  var firstVowelIndex = "";
+  var index = 0;
+  while (index < word.length && firstVowelIndex === "") {
     if(isAVowel(word[index])){
       firstVowelIndex = index;
     }
+    index ++;
   }
-  if((firstVowelIndex === 1) && (word[firstVowelIndex-1] !== "q")){
+  if((firstVowelIndex === 1) && ((word[firstVowelIndex-1] !== "q") ||(word[firstVowelIndex-1] !== "Q"))) {
     return "";
   }
-  else if(word[firstVowelIndex-1] === "q"){
+  else if(word[firstVowelIndex-1] === "q" || word[firstVowelIndex-1] === "Q") {
     //include the u that comes after q
-    return word.slice(firstVowelIndex) + word.slice(0,firstVowelIndex) + "ay";
+    return word.slice(firstVowelIndex+1) + word.slice(0,firstVowelIndex+1) + "ay";
   }
   else{
     //do not include the vowel
-    return word.slice(firstVowelIndex-1) + word.slice(0,firstVowelIndex-1) + "ay";
+    return word.slice(firstVowelIndex) + word.slice(0,firstVowelIndex) + "ay";
   }
 }
 
@@ -87,7 +111,7 @@ var multipleStarts = function(word) { //checks multiple letters before first vow
 $(document).ready(function () {
   $("form#pig-latin").submit(function(event) {
     var input = $("#input").val();
-    var output = wordTranslator(input);
+    var output = sentenceTranslator(input);
     $("#result").text(output);
     $("#result").show();
     event.preventDefault();
