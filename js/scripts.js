@@ -1,4 +1,9 @@
-
+//Main function
+var sentenceTranslator = function (sentence) {
+  sentenceTrimmed = sentence.replace(/  +/g, " ");
+  var sentenceArray = sentenceTrimmed.split(" ");
+  return sentenceArray;
+}
 
 
 
